@@ -80,13 +80,6 @@ namespace Il2CppDumper
         }
         private void InitKeys(Il2CppGlobalMetadataHeader p_Header)
         {
-            {
-                var s_Random2 = new mt19937_64_t();
-                s_Random2.init_genrand64(0x69690150620D0473);
-            }
-
-            //new mt19937_64_t();
-            // This stupid lib uses uint32 seeds for init, need to create an array lmao
             var s_Random = new mt19937_64_t();
             s_Random.init_genrand64(this.m_Seed);
 

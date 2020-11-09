@@ -42,7 +42,8 @@ namespace Il2CppDumper
                     if (File.Exists(arg))
                     {
                         var file = File.ReadAllBytes(arg);
-                        if (BitConverter.ToUInt32(file, 0) == 0xFAB11BAF)
+                        if (BitConverter.ToUInt32(file, 0) == 0xFAB11BAF || 
+                            BitConverter.ToUInt32(file, 0) == 0xBBAE919B)
                         {
                             metadataPath = arg;
                         }
@@ -61,8 +62,8 @@ namespace Il2CppDumper
             {
                 outputDir = AppDomain.CurrentDomain.BaseDirectory;
             }
-            il2cppPath = "F:\\Genshin Impact\\Genshin Impact Game\\YuanShen_Data\\Native\\UserAssembly.dll";
-            metadataPath = "C:\\Users\\Sanae\\Desktop\\global-metadata\\global-metadata.dat";
+            il2cppPath = @"F:\Genshin Impact\Genshin Impact Game\GenshinImpact_Data\Native\UserAssembly.dll";
+            metadataPath = @"F:\Genshin Impact\reverse\global-metadata.bin";
 #if NETFRAMEWORK
             if (il2cppPath == null)
             {
@@ -92,17 +93,12 @@ namespace Il2CppDumper
                 ShowHelp();
                 return;
             }
-            try
+       
+            if (Init(il2cppPath, metadataPath, out var metadata, out var il2Cpp))
             {
-                if (Init(il2cppPath, metadataPath, out var metadata, out var il2Cpp))
-                {
-                    Dump(metadata, il2Cpp, outputDir);
-                }
+                Dump(metadata, il2Cpp, outputDir);
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+    
             if (config.RequireAnyKey)
             {
                 Console.WriteLine("Press any key to exit...");
@@ -188,7 +184,7 @@ namespace Il2CppDumper
 
 
             Console.WriteLine("Searching...");
-            try
+            //try
             {
                 //var flag = il2Cpp.PlusSearch(metadata.methodDefs.Count(x => x.methodIndex >= 0), metadata.typeDefs.Length);
                 var flag = false;
@@ -210,13 +206,13 @@ namespace Il2CppDumper
                 {
                     flag = il2Cpp.SymbolSearch();
                 }*/
-                if (true)
+                if (!flag)
                 {
-                    /*Console.WriteLine("ERROR: Can't use auto mode to process file, try manual mode.");
+                    Console.WriteLine("ERROR: Can't use auto mode to process file, try manual mode.");
                     Console.Write("Input CodeRegistration: ");
-                    var codeRegistration = Convert.ToUInt64(Console.ReadLine(), 16);
+                    ulong codeRegistration = 0x581BD90;//Convert.ToUInt64(Console.ReadLine(), 16);
                     Console.Write("Input MetadataRegistration: ");
-                    var metadataRegistration = Convert.ToUInt64(Console.ReadLine(), 16);*/
+                    ulong metadataRegistration = 0x581C170;//Convert.ToUInt64(Console.ReadLine(), 16);
                     ProcessModuleCollection pms = Process.GetCurrentProcess().Modules;
                     ulong baseaddr = 0;
                     foreach(ProcessModule pm in pms)
@@ -228,18 +224,13 @@ namespace Il2CppDumper
                         }
                     }
                     Console.WriteLine("baseadr: 0x" + baseaddr.ToString("x2"));
-                    var codeRegistration = baseaddr + 0x581BD90;
-                    var metadataRegistration = baseaddr + 0x581C170;
-                    il2Cpp.Init(codeRegistration, metadataRegistration);
+                    //var codeRegistration = baseaddr + 0x581BD90;
+                    //var metadataRegistration = baseaddr + 0x581C170;
+                    il2Cpp.Init(baseaddr + codeRegistration, baseaddr + metadataRegistration);
                     return true;
                 }
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                Console.WriteLine("ERROR: An error occurred while processing.");
-                return false;
-            }
+
             return true;
         }
 
@@ -250,7 +241,7 @@ namespace Il2CppDumper
             var decompiler = new Il2CppDecompiler(executor);
             decompiler.Decompile(config, outputDir);
             Console.WriteLine("Done!");
-            if (false)
+            if (config.GenerateScript)
             {
                 Console.WriteLine("Generate script...");
                 var scriptGenerator = new ScriptGenerator(executor);

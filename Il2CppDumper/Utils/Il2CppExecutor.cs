@@ -123,7 +123,7 @@ namespace Il2CppDumper
                         if (is_nested)
                             return str;
 
-                        if (genericClass != null)
+                        if (genericClass != null && genericClass.context.class_inst != 0)
                         {
                             var genericInst = il2Cpp.MapVATR<Il2CppGenericInst>(genericClass.context.class_inst);
                             str += GetGenericInstParams(genericInst);

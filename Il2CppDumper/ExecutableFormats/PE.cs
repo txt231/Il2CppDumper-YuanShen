@@ -62,7 +62,7 @@ namespace Il2CppDumper
             {
                 return 0ul;
             }
-            return addr - (section.VirtualAddress - section.PointerToRawData);
+            return addr - section.VirtualAddress + section.PointerToRawData;
         }
 
         public override bool Search()

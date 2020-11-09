@@ -3,9 +3,13 @@ Modified version of Il2CppDumper allows you to dump methods of UserAssembly.dll 
 
 NOTICE: The global-metadata.dat of the game Genshin Impact has been encrypted, you need to dump decrypted file from memory before use this tool.
 
-中文说明请戳[这里](README.zh-CN.md)
 
-Unity il2cpp reverse engineer
+stole the mersenne twister class from some repo as i didnt like it using 32 bit integers, so the raw class is more useful... (credits below)
+
+
+## Possible todo list???
+- add sig scanning for static offsets
+
 
 ## Features
 
@@ -101,3 +105,4 @@ If you have a rooted Android phone, you can try my other project [Riru-Il2CppDum
 ## Credits
 
 - Jumboperson - [Il2CppDumper](https://github.com/Jumboperson/Il2CppDumper)
+- akiotakahashi - [MersenneTwister](https://github.com/akiotakahashi/MersenneTwister)

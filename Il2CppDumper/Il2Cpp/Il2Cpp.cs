@@ -74,6 +74,7 @@ namespace Il2CppDumper
         public virtual void Init(ulong codeRegistration, ulong metadataRegistration)
         {
             pCodeRegistration = MapVATR<Il2CppCodeRegistration>(codeRegistration);
+            /*
             if (Version == 24.2f)
             {
                 if (pCodeRegistration.codeGenModules == 0) //TODO
@@ -83,6 +84,7 @@ namespace Il2CppDumper
                     pCodeRegistration = MapVATR<Il2CppCodeRegistration>(codeRegistration);
                 }
             }
+            */
             pMetadataRegistration = MapVATR<Il2CppMetadataRegistration>(metadataRegistration);
             genericMethodPointers = MapVATR<ulong>(pCodeRegistration.genericMethodPointers, pCodeRegistration.genericMethodPointersCount);
             invokerPointers = MapVATR<ulong>(pCodeRegistration.invokerPointers, pCodeRegistration.invokerPointersCount);
@@ -125,6 +127,7 @@ namespace Il2CppDumper
                 types[i].Init();
                 typeDic.Add(pTypes[i], types[i]);
             }
+            /*
             if (Version >= 24.2f)
             {
                 var pCodeGenModules = MapVATR<ulong>(pCodeRegistration.codeGenModules, pCodeRegistration.codeGenModulesCount);
@@ -163,6 +166,7 @@ namespace Il2CppDumper
                 }
             }
             else
+            */
             {
                 methodPointers = MapVATR<ulong>(pCodeRegistration.methodPointers, pCodeRegistration.methodPointersCount);
             }

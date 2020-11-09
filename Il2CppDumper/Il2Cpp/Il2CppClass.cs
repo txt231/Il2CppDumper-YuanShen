@@ -4,86 +4,55 @@ namespace Il2CppDumper
 {
     public class Il2CppCodeRegistration
     {
-        [Version(Max = 24.1f)]
-        public long methodPointersCount;
-        [Version(Max = 24.1f)]
-        public ulong methodPointers;
-        [Version(Max = 21)]
-        public ulong delegateWrappersFromNativeToManagedCount;
-        [Version(Max = 21)]
-        public ulong delegateWrappersFromNativeToManaged; // note the double indirection to handle different calling conventions
-        [Version(Min = 22)]
-        public long reversePInvokeWrapperCount;
-        [Version(Min = 22)]
-        public ulong reversePInvokeWrappers;
-        [Version(Max = 22)]
-        public ulong delegateWrappersFromManagedToNativeCount;
-        [Version(Max = 22)]
-        public ulong delegateWrappersFromManagedToNative;
-        [Version(Max = 22)]
-        public ulong marshalingFunctionsCount;
-        [Version(Max = 22)]
-        public ulong marshalingFunctions;
-        [Version(Min = 21, Max = 22)]
-        public ulong ccwMarshalingFunctionsCount;
-        [Version(Min = 21, Max = 22)]
-        public ulong ccwMarshalingFunctions;
-        public long genericMethodPointersCount;
-        public ulong genericMethodPointers;
-        public long invokerPointersCount;
-        public ulong invokerPointers;
-        [Version(Max = 24.3f)]
-        public long customAttributeCount;
-        [Version(Max = 24.3f)]
-        public ulong customAttributeGenerators;
-        [Version(Min = 21, Max = 22)]
-        public long guidCount;
-        [Version(Min = 21, Max = 22)]
-        public ulong guids; // Il2CppGuid
-        [Version(Min = 22)]
-        public long unresolvedVirtualCallCount;
-        [Version(Min = 22)]
-        public ulong unresolvedVirtualCallPointers;
-        [Version(Min = 23)]
-        public ulong interopDataCount;
-        [Version(Min = 23)]
-        public ulong interopData;
-        [Version(Min = 24.3f)]
-        public ulong windowsRuntimeFactoryCount;
-        [Version(Min = 24.3f)]
-        public ulong windowsRuntimeFactoryTable;
-        [Version(Min = 24.2f)]
-        public long codeGenModulesCount;
-        [Version(Min = 24.2f)]
-        public ulong codeGenModules;
+        public long methodPointersCount; //0x0000
+        public ulong methodPointers; //0x0008
+
+        public long reversePInvokeWrapperCount; //0x0010
+        public ulong reversePInvokeWrappers; //0x0018
+
+
+        public long genericMethodPointersCount; //0x0020
+        public ulong genericMethodPointers; //0x0028
+
+        public long invokerPointersCount; //0x0030
+        public ulong invokerPointers; //0x0038
+
+        public long customAttributeCount; //0x0040
+        public ulong customAttributeGenerators; //0x0048
+
+        public long unresolvedVirtualCallCount; //0x0050
+        public ulong unresolvedVirtualCallPointers; //0x0058
+
+        public ulong interopDataCount; //0x0060
+        public ulong interopData; //0x0068
+
     }
 
     public class Il2CppMetadataRegistration
     {
-        public long genericClassesCount;
-        public ulong genericClasses;
-        public long genericInstsCount;
-        public ulong genericInsts;
-        public long genericMethodTableCount;
-        public ulong genericMethodTable;
-        public long typesCount;
-        public ulong types;
-        public long methodSpecsCount;
-        public ulong methodSpecs;
-        [Version(Max = 16)]
-        public long methodReferencesCount;
-        [Version(Max = 16)]
-        public ulong methodReferences;
+        public long genericClassesCount; //0x0000
+        public ulong genericClasses; //0x0008
 
-        public long fieldOffsetsCount;
-        public ulong fieldOffsets;
+        public long genericInstsCount; //0x0010
+        public ulong genericInsts; //0x0018
 
-        public long typeDefinitionsSizesCount;
-        public ulong typeDefinitionsSizes;
-        [Version(Min = 19)]
-        public ulong metadataUsagesCount;
-        [Version(Min = 19)]
-        public ulong metadataUsages;
+        public long genericMethodTableCount; //0x0020
+        public ulong genericMethodTable; //0x0028
+
+        public long typesCount; //0x0030
+        public ulong types; //0x0038
+
+        public long methodSpecsCount; //0x0040
+        public ulong methodSpecs; //0x0048
+
+        public long fieldOffsetsCount; //0x0050
+        public ulong fieldOffsets; //0x0058
+
+        public long typeDefinitionsSizesCount; //0x0060
+        public ulong typeDefinitionsSizes; //0x0068
+
+        public ulong metadataUsagesCount; //0x0070
+        public ulong metadataUsages; //0x0078
     }
 
     public enum Il2CppTypeEnum
@@ -185,9 +154,7 @@ namespace Il2CppDumper
 
     public class Il2CppGenericClass
     {
-        [Version(Max = 24.3f)]
         public long typeDefinitionIndex;    /* the generic type definition */
-        [Version(Min = 27)]
         public ulong type;        /* the generic type definition */
         public Il2CppGenericContext context;   /* a context that contains the type instantiation doesn't contain any method instantiation */
         public ulong cached_class; /* if present, the Il2CppClass corresponding to the instantiation.  */
@@ -209,12 +176,12 @@ namespace Il2CppDumper
 
     public class Il2CppArrayType
     {
-        public ulong etype;
-        public byte rank;
-        public byte numsizes;
-        public byte numlobounds;
-        public ulong sizes;
-        public ulong lobounds;
+        public ulong etype; //0x0000
+        public byte rank; //0x0008
+        public byte numsizes; //0x0009
+        public byte numlobounds; //0x000A
+        public ulong sizes; //0x0010
+        public ulong lobounds;  //0x0018
     }
 
     public class Il2CppGenericMethodFunctionsDefinitions

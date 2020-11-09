@@ -102,116 +102,143 @@ namespace Il2CppDumper
 
     public class Il2CppGlobalMetadataHeader
     {
-        public uint sanity;
-        public int version;
+        public uint sanity; //0x0000
+        public int version; //0x0004
 
-        public uint padding1;
-        public uint padding2;
-        public uint padding3; //0x10
-        public uint padding4;
-        public uint padding5;
-        public uint padding6;
-        public uint padding7; //0x20
-        public uint padding8;
+        public uint KeyPart5_1; //0x0008
+        public uint KeyPart5_2; //0x000C
+        public uint KeyPart5_3; //0x0010
+        public uint KeyPart5_4; //0x0014
 
-        public uint genericContainersOffset; // 0x28
-        public int genericContainersCount;
-        public uint nestedTypesOffset; // 0x30
-        public int nestedTypesCount;
-        public uint interfacesOffset; // 0x38
-        public int interfacesCount;
-        public uint vtableMethodsOffset; // 0x40
-        public int vtableMethodsCount;
+        public uint stringLiteralDataOffset; //0x0018
+        public uint stringLiteralDataCount; //0x001C
 
-        public uint padding9;
-        public uint padding10;
+        public uint stringLiteralOffset; //0x0020
+        public uint stringLiteralCount; //0x0024
 
-        public uint typeDefinitionsOffset; // 0x50
-        public int typeDefinitionsCount;
-        public uint rgctxEntriesOffset; // 0x58
-        public int rgctxEntriesCount;
+        public uint genericContainersOffset; //0x0028
+        public int genericContainersCount; //0x002C
 
-        public uint padding11; //0x60
-        public uint padding12;
-        public uint padding13;
-        public uint padding14;
+        public uint nestedTypesOffset; //0x0030
+        public int nestedTypesCount; //0x0034
 
-        public uint imagesOffset; // 0x70
-        public int imagesCount;
+        public uint interfacesOffset; //0x0038
+        public int interfacesCount; //0x003C
 
-        public uint padding15;
-        public uint padding16;
+        public uint vtableMethodsOffset; //0x0040
+        public int vtableMethodsCount; //0x0044
 
-        public uint fieldsOffset; // 0x80
-        public int fieldsCount;
-        public uint genericParametersOffset; // 0x88
-        public int genericParametersCount;
-        public uint fieldAndParameterDefaultValueDataOffset; // 0x90
-        public int fieldAndParameterDefaultValueDataCount;  //0x94
+        public uint interfaceOffsetsOffset; //0x0048
+        public uint interfaceOffsetsCount; //0x004C
+
+        public uint typeDefinitionsOffset; //0x0050
+        public int typeDefinitionsCount; //0x0054
+        public uint rgctxEntriesOffset; //0x0058
+        public int rgctxEntriesCount; //0x005C
+
+        public uint KeyPart1_1; //0x0060
+        public uint KeyPart1_2; //0x0064
+        public uint KeyPart1_3; //0x0068
+        public uint KeyPart1_4; //0x006C
+
+        public uint imagesOffset; //0x0070
+        public int imagesCount; //0x0074
+
+        public uint assembliesOffset; //0x0078
+        public uint assembliesSize; //0x007C
+
+        public uint fieldsOffset; //0x0080
+        public int fieldsCount; //0x0084
+
+        public uint genericParametersOffset; //0x0088
+        public int genericParametersCount; //0x008C
+
+        public uint fieldAndParameterDefaultValueDataOffset; //0x0090
+        public int fieldAndParameterDefaultValueDataCount;  //0x0094
 
 
-        public uint padding17;
-        public uint padding18;
-        public uint padding19;  //0xa0
-        public uint padding20;
-        public uint attributesInfoOffset;
-        public int attributesInfoCount;
-        public uint attributeTypesOffset;   //0xb0
-        public int attributeTypesCount;
-        public uint padding25;
-        public uint padding26;
-        public uint padding27;  //0xc0
-        public uint padding28;
-        public uint padding29;
-        public uint padding30;
-        public uint padding31;  //0xd0
-        public uint padding32;
-        public uint padding33;
-        public uint padding34;
+        public uint padding17; //0x0098
+        public uint padding18; //0x009C
 
-        public uint parametersOffset; // 0xe0
-        public int parametersCount;
-        public uint genericParameterConstraintsOffset; // 0xe8
-        public int genericParameterConstraintsCount;
+        public uint refrencedAssembliesOffset; //0x00A0
+        public uint refrencedAssembliesCount; //0x00A4
 
-        public uint padding35;  //0xf0
-        public uint padding36;
-        public uint metadataUsagePairsOffset;
-        public int metadataUsagePairsCount;
-        public uint padding39;  //0x100
-        public uint padding40;
-        public uint padding41;
-        public uint padding42;
-        public uint fieldRefsOffset;  //0x110
-        public int fieldRefsCount;
+        public uint attributesInfoOffset; //0x00A8
+        public int attributesInfoCount; //0x00AC
 
-        public uint eventsOffset; // 0x118
-        public int eventsCount;
-        public uint propertiesOffset; // 0x120
-        public int propertiesCount;
-        public uint methodsOffset; // 0x128
-        public int methodsCount;
-        public uint parameterDefaultValuesOffset;	//0x130
-        public int parameterDefaultValuesCount;
-        public uint fieldDefaultValuesOffset; // 0x138
-        public int fieldDefaultValuesCount;
+        public uint attributeTypesOffset; //0x00B0
+        public int attributeTypesCount; //0x00B4
 
-        public uint padding45; // 0x140
-        public uint padding46;
-        public uint padding47;
-        public uint padding48;
-        public uint metadataUsageListsOffset; // 0x150
-        public int metadataUsageListsCount;
+        public uint unresolvedVirtualCallParameterTypesOffset; //0x00B8
+        public uint unresolvedVirtualCallParameterTypesCount; //0x00BC
+
+        public uint unresolvedVirtualCallParameterRangesOffset; //0x00C0
+        public uint unresolvedVirtualCallParameterRangesCount; //0x00C4
+
+        public uint windowsRuntimeTypeNamesOffset; //0x00C8
+        public uint windowsRuntimeTypeNamesCount; //0x00CC
+
+        public uint exportedTypeDefinitionsOffset; //0x00D0
+        public uint exportedTypeDefinitionsCount; //0x00D4
+
+        public uint stringsOffset; //0x00D8
+        public uint stringsCount; //0x00DC
+
+        public uint parametersOffset; //0x00E0
+        public int parametersCount; //0x00E4
+
+        public uint genericParameterConstraintsOffset; //0x00E8
+        public int genericParameterConstraintsCount; //0x00EC
+
+        public uint KeyPart4_1; //0x00F0
+        public uint KeyPart4_2; //0x00F4
+
+        public uint metadataUsagePairsOffset; //0x00F8
+        public int metadataUsagePairsCount; //0x00FC
+
+        public uint KeyPart3_1; //0x0100
+        public uint KeyPart3_2; //0x0104
+        public uint KeyPart3_3; //0x0108
+        public uint KeyPart3_4; //0x010C
+
+        public uint fieldRefsOffset; //0x0110
+        public int fieldRefsCount; //0x0114
+
+        public uint eventsOffset; //0x0118
+        public int eventsCount; //0x011C
+
+        public uint propertiesOffset; //0x0120
+        public int propertiesCount; //0x0124
+
+        public uint methodsOffset; //0x0128
+        public int methodsCount; //0x012C
+
+        public uint parameterDefaultValuesOffset; //0x0130
+        public int parameterDefaultValuesCount; //0x0134
+
+        public uint fieldDefaultValuesOffset; //0x0138
+        public int fieldDefaultValuesCount; //0x013C
+
+        public uint KeyPart2_1; //0x0140
+        public uint KeyPart2_2; //0x0144
+        public uint KeyPart2_3; //0x0148
+        public uint KeyPart2_4; //0x014C
+
+        public uint metadataUsageListsOffset; //0x0150
+        public int metadataUsageListsCount; //0x0154
     }
 
     public class Il2CppImageDefinition
     {
         public uint nameIndex;
         public int assemblyIndex;
+
         public int typeStart;
         public uint typeCount;
+
         public int exportedTypeStart;
         public uint exportedTypeCount;
+
         public int entryPointIndex;
         public uint token;
 
@@ -293,16 +320,21 @@ namespace Il2CppDumper
     {
         public uint nameIndex;
         public uint namespaceIndex;
+
         public int customAttributeIndex;
         public int byvalTypeIndex;
         public int byrefTypeIndex;
+
         public int declaringTypeIndex;
         public int parentIndex;
         public int elementTypeIndex;
+
         public int rgctxStartIndex;
         public int rgctxCount;
+
         public int genericContainerIndex;
         public uint flags;
+
         public int fieldStart;
         public int propertyStart;
         public int methodStart;
@@ -311,6 +343,7 @@ namespace Il2CppDumper
         public int interfacesStart;
         public int interfaceOffsetsStart;
         public int vtableStart;
+
         public ushort event_count;
         public ushort method_count;
         public ushort property_count;
@@ -366,21 +399,29 @@ namespace Il2CppDumper
     {
         public int returnType;
         public int declaringType;
+
         public uint Padding1;
+
         public uint nameIndex;
         public int parameterStart;
+
         public int genericContainerIndex;
         public int customAttributeIndex;
+
         public uint Padding2;
         public uint Padding3;
+
         public int methodIndex;
         public int invokerIndex;
+
         public int rgctxCount;
         public int rgctxStartIndex;
+
         public ushort parameterCount;
         public ushort flags;
         public ushort slot;
         public ushort iflags;
+
         public uint token;
     }
 
@@ -388,7 +429,7 @@ namespace Il2CppDumper
     {
         public uint nameIndex;
         public uint token;
-        [Version(Max = 24)]
+        //[Version(Max = 24)]
         public int customAttributeIndex;
         public int typeIndex;
     }
@@ -442,8 +483,8 @@ namespace Il2CppDumper
 
     public class Il2CppCustomAttributeTypeRange
     {
-        [Version(Min = 24.1f)]
-        public uint token;
+        //[Version(Min = 24.1f)]
+        //public uint token;
         public int start;
         public int count;
     }

@@ -370,8 +370,8 @@ struct MethodInfo
     Il2CppClass* castClass;
     Il2CppClass* declaringType;
     Il2CppClass* parent;
-    void *generic_class;
-    void* typeDefinition;
+    void* generic_class;
+    __int64 typeDefinition;
     void* interopData;
     void* fields;
     void* events;

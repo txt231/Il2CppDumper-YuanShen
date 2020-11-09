@@ -421,96 +421,99 @@ namespace Il2CppDumper
             var moduleDefinition = memberReference.Module;
             switch (il2CppType.type)
             {
-                case Il2CppTypeEnum.IL2CPP_TYPE_OBJECT:
-                    return moduleDefinition.ImportReference(typeof(object));
-                case Il2CppTypeEnum.IL2CPP_TYPE_VOID:
-                    return moduleDefinition.ImportReference(typeof(void));
-                case Il2CppTypeEnum.IL2CPP_TYPE_BOOLEAN:
-                    return moduleDefinition.ImportReference(typeof(bool));
-                case Il2CppTypeEnum.IL2CPP_TYPE_CHAR:
-                    return moduleDefinition.ImportReference(typeof(char));
-                case Il2CppTypeEnum.IL2CPP_TYPE_I1:
-                    return moduleDefinition.ImportReference(typeof(sbyte));
-                case Il2CppTypeEnum.IL2CPP_TYPE_U1:
-                    return moduleDefinition.ImportReference(typeof(byte));
-                case Il2CppTypeEnum.IL2CPP_TYPE_I2:
-                    return moduleDefinition.ImportReference(typeof(short));
-                case Il2CppTypeEnum.IL2CPP_TYPE_U2:
-                    return moduleDefinition.ImportReference(typeof(ushort));
-                case Il2CppTypeEnum.IL2CPP_TYPE_I4:
-                    return moduleDefinition.ImportReference(typeof(int));
-                case Il2CppTypeEnum.IL2CPP_TYPE_U4:
-                    return moduleDefinition.ImportReference(typeof(uint));
-                case Il2CppTypeEnum.IL2CPP_TYPE_I:
-                    return moduleDefinition.ImportReference(typeof(IntPtr));
-                case Il2CppTypeEnum.IL2CPP_TYPE_U:
-                    return moduleDefinition.ImportReference(typeof(UIntPtr));
-                case Il2CppTypeEnum.IL2CPP_TYPE_I8:
-                    return moduleDefinition.ImportReference(typeof(long));
-                case Il2CppTypeEnum.IL2CPP_TYPE_U8:
-                    return moduleDefinition.ImportReference(typeof(ulong));
-                case Il2CppTypeEnum.IL2CPP_TYPE_R4:
-                    return moduleDefinition.ImportReference(typeof(float));
-                case Il2CppTypeEnum.IL2CPP_TYPE_R8:
-                    return moduleDefinition.ImportReference(typeof(double));
-                case Il2CppTypeEnum.IL2CPP_TYPE_STRING:
-                    return moduleDefinition.ImportReference(typeof(string));
-                case Il2CppTypeEnum.IL2CPP_TYPE_TYPEDBYREF:
-                    return moduleDefinition.ImportReference(typeof(TypedReference));
-                case Il2CppTypeEnum.IL2CPP_TYPE_CLASS:
-                case Il2CppTypeEnum.IL2CPP_TYPE_VALUETYPE:
+            case Il2CppTypeEnum.IL2CPP_TYPE_OBJECT:
+                return moduleDefinition.ImportReference(typeof(object));
+            case Il2CppTypeEnum.IL2CPP_TYPE_VOID:
+                return moduleDefinition.ImportReference(typeof(void));
+            case Il2CppTypeEnum.IL2CPP_TYPE_BOOLEAN:
+                return moduleDefinition.ImportReference(typeof(bool));
+            case Il2CppTypeEnum.IL2CPP_TYPE_CHAR:
+                return moduleDefinition.ImportReference(typeof(char));
+            case Il2CppTypeEnum.IL2CPP_TYPE_I1:
+                return moduleDefinition.ImportReference(typeof(sbyte));
+            case Il2CppTypeEnum.IL2CPP_TYPE_U1:
+                return moduleDefinition.ImportReference(typeof(byte));
+            case Il2CppTypeEnum.IL2CPP_TYPE_I2:
+                return moduleDefinition.ImportReference(typeof(short));
+            case Il2CppTypeEnum.IL2CPP_TYPE_U2:
+                return moduleDefinition.ImportReference(typeof(ushort));
+            case Il2CppTypeEnum.IL2CPP_TYPE_I4:
+                return moduleDefinition.ImportReference(typeof(int));
+            case Il2CppTypeEnum.IL2CPP_TYPE_U4:
+                return moduleDefinition.ImportReference(typeof(uint));
+            case Il2CppTypeEnum.IL2CPP_TYPE_I:
+                return moduleDefinition.ImportReference(typeof(IntPtr));
+            case Il2CppTypeEnum.IL2CPP_TYPE_U:
+                return moduleDefinition.ImportReference(typeof(UIntPtr));
+            case Il2CppTypeEnum.IL2CPP_TYPE_I8:
+                return moduleDefinition.ImportReference(typeof(long));
+            case Il2CppTypeEnum.IL2CPP_TYPE_U8:
+                return moduleDefinition.ImportReference(typeof(ulong));
+            case Il2CppTypeEnum.IL2CPP_TYPE_R4:
+                return moduleDefinition.ImportReference(typeof(float));
+            case Il2CppTypeEnum.IL2CPP_TYPE_R8:
+                return moduleDefinition.ImportReference(typeof(double));
+            case Il2CppTypeEnum.IL2CPP_TYPE_STRING:
+                return moduleDefinition.ImportReference(typeof(string));
+            case Il2CppTypeEnum.IL2CPP_TYPE_TYPEDBYREF:
+                return moduleDefinition.ImportReference(typeof(TypedReference));
+            case Il2CppTypeEnum.IL2CPP_TYPE_CLASS:
+            case Il2CppTypeEnum.IL2CPP_TYPE_VALUETYPE:
+            {
+                var typeDef = executor.GetTypeDefinitionFromIl2CppType(il2CppType);
+                var typeDefinition = typeDefinitionDic[typeDef];
+                return moduleDefinition.ImportReference(typeDefinition);
+            }
+            case Il2CppTypeEnum.IL2CPP_TYPE_ARRAY:
+            {
+                var arrayType = il2Cpp.MapVATR<Il2CppArrayType>(il2CppType.data.array);
+                var oriType = il2Cpp.GetIl2CppType(arrayType.etype);
+                return new ArrayType(GetTypeReference(memberReference, oriType), arrayType.rank);
+            }
+            case Il2CppTypeEnum.IL2CPP_TYPE_GENERICINST:
+            {
+                var genericClass = il2Cpp.MapVATR<Il2CppGenericClass>(il2CppType.data.generic_class);
+                var typeDef = executor.GetGenericClassTypeDefinition(genericClass);
+                var typeDefinition = typeDefinitionDic[typeDef];
+                var genericInstanceType = new GenericInstanceType(moduleDefinition.ImportReference(typeDefinition));
+                if (genericClass.context.class_inst != 0)
+                {
+                    var genericInst = il2Cpp.MapVATR<Il2CppGenericInst>(genericClass.context.class_inst);
+                    var pointers = il2Cpp.MapVATR<ulong>(genericInst.type_argv, genericInst.type_argc);
+                    foreach (var pointer in pointers)
                     {
-                        var typeDef = executor.GetTypeDefinitionFromIl2CppType(il2CppType);
-                        var typeDefinition = typeDefinitionDic[typeDef];
-                        return moduleDefinition.ImportReference(typeDefinition);
+                        var oriType = il2Cpp.GetIl2CppType(pointer);
+                        genericInstanceType.GenericArguments.Add(GetTypeReference(memberReference, oriType));
                     }
-                case Il2CppTypeEnum.IL2CPP_TYPE_ARRAY:
-                    {
-                        var arrayType = il2Cpp.MapVATR<Il2CppArrayType>(il2CppType.data.array);
-                        var oriType = il2Cpp.GetIl2CppType(arrayType.etype);
-                        return new ArrayType(GetTypeReference(memberReference, oriType), arrayType.rank);
-                    }
-                case Il2CppTypeEnum.IL2CPP_TYPE_GENERICINST:
-                    {
-                        var genericClass = il2Cpp.MapVATR<Il2CppGenericClass>(il2CppType.data.generic_class);
-                        var typeDef = executor.GetGenericClassTypeDefinition(genericClass);
-                        var typeDefinition = typeDefinitionDic[typeDef];
-                        var genericInstanceType = new GenericInstanceType(moduleDefinition.ImportReference(typeDefinition));
-                        var genericInst = il2Cpp.MapVATR<Il2CppGenericInst>(genericClass.context.class_inst);
-                        var pointers = il2Cpp.MapVATR<ulong>(genericInst.type_argv, genericInst.type_argc);
-                        foreach (var pointer in pointers)
-                        {
-                            var oriType = il2Cpp.GetIl2CppType(pointer);
-                            genericInstanceType.GenericArguments.Add(GetTypeReference(memberReference, oriType));
-                        }
-                        return genericInstanceType;
-                    }
-                case Il2CppTypeEnum.IL2CPP_TYPE_SZARRAY:
-                    {
-                        var oriType = il2Cpp.GetIl2CppType(il2CppType.data.type);
-                        return new ArrayType(GetTypeReference(memberReference, oriType));
-                    }
-                case Il2CppTypeEnum.IL2CPP_TYPE_VAR:
-                    {
-                        if (memberReference is MethodDefinition methodDefinition)
-                        {
-                            return CreateGenericParameter(executor.GetGenericParameteFromIl2CppType(il2CppType), methodDefinition.DeclaringType);
-                        }
-                        var typeDefinition = (TypeDefinition)memberReference;
-                        return CreateGenericParameter(executor.GetGenericParameteFromIl2CppType(il2CppType), typeDefinition);
-                    }
-                case Il2CppTypeEnum.IL2CPP_TYPE_MVAR:
-                    {
-                        var methodDefinition = (MethodDefinition)memberReference;
-                        return CreateGenericParameter(executor.GetGenericParameteFromIl2CppType(il2CppType), methodDefinition);
-                    }
-                case Il2CppTypeEnum.IL2CPP_TYPE_PTR:
-                    {
-                        var oriType = il2Cpp.GetIl2CppType(il2CppType.data.type);
-                        return new PointerType(GetTypeReference(memberReference, oriType));
-                    }
-                default:
-                    throw new ArgumentOutOfRangeException();
+                }
+                return genericInstanceType;
+            }
+            case Il2CppTypeEnum.IL2CPP_TYPE_SZARRAY:
+            {
+                var oriType = il2Cpp.GetIl2CppType(il2CppType.data.type);
+                return new ArrayType(GetTypeReference(memberReference, oriType));
+            }
+            case Il2CppTypeEnum.IL2CPP_TYPE_VAR:
+            {
+                if (memberReference is MethodDefinition methodDefinition)
+                {
+                    return CreateGenericParameter(executor.GetGenericParameteFromIl2CppType(il2CppType), methodDefinition.DeclaringType);
+                }
+                var typeDefinition = (TypeDefinition)memberReference;
+                return CreateGenericParameter(executor.GetGenericParameteFromIl2CppType(il2CppType), typeDefinition);
+            }
+            case Il2CppTypeEnum.IL2CPP_TYPE_MVAR:
+            {
+                var methodDefinition = (MethodDefinition)memberReference;
+                return CreateGenericParameter(executor.GetGenericParameteFromIl2CppType(il2CppType), methodDefinition);
+            }
+            case Il2CppTypeEnum.IL2CPP_TYPE_PTR:
+            {
+                var oriType = il2Cpp.GetIl2CppType(il2CppType.data.type);
+                return new PointerType(GetTypeReference(memberReference, oriType));
+            }
+            default:
+                throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -521,49 +524,49 @@ namespace Il2CppDumper
             metadata.Position = pointer;
             switch (defaultValueType.type)
             {
-                case Il2CppTypeEnum.IL2CPP_TYPE_BOOLEAN:
-                    value = metadata.ReadBoolean();
-                    return true;
-                case Il2CppTypeEnum.IL2CPP_TYPE_U1:
-                    value = metadata.ReadByte();
-                    return true;
-                case Il2CppTypeEnum.IL2CPP_TYPE_I1:
-                    value = metadata.ReadSByte();
-                    return true;
-                case Il2CppTypeEnum.IL2CPP_TYPE_CHAR:
-                    value = BitConverter.ToChar(metadata.ReadBytes(2), 0);
-                    return true;
-                case Il2CppTypeEnum.IL2CPP_TYPE_U2:
-                    value = metadata.ReadUInt16();
-                    return true;
-                case Il2CppTypeEnum.IL2CPP_TYPE_I2:
-                    value = metadata.ReadInt16();
-                    return true;
-                case Il2CppTypeEnum.IL2CPP_TYPE_U4:
-                    value = metadata.ReadUInt32();
-                    return true;
-                case Il2CppTypeEnum.IL2CPP_TYPE_I4:
-                    value = metadata.ReadInt32();
-                    return true;
-                case Il2CppTypeEnum.IL2CPP_TYPE_U8:
-                    value = metadata.ReadUInt64();
-                    return true;
-                case Il2CppTypeEnum.IL2CPP_TYPE_I8:
-                    value = metadata.ReadInt64();
-                    return true;
-                case Il2CppTypeEnum.IL2CPP_TYPE_R4:
-                    value = metadata.ReadSingle();
-                    return true;
-                case Il2CppTypeEnum.IL2CPP_TYPE_R8:
-                    value = metadata.ReadDouble();
-                    return true;
-                case Il2CppTypeEnum.IL2CPP_TYPE_STRING:
-                    var len = metadata.ReadInt32();
-                    value = metadata.ReadString(len);
-                    return true;
-                default:
-                    value = pointer;
-                    return false;
+            case Il2CppTypeEnum.IL2CPP_TYPE_BOOLEAN:
+                value = metadata.ReadBoolean();
+                return true;
+            case Il2CppTypeEnum.IL2CPP_TYPE_U1:
+                value = metadata.ReadByte();
+                return true;
+            case Il2CppTypeEnum.IL2CPP_TYPE_I1:
+                value = metadata.ReadSByte();
+                return true;
+            case Il2CppTypeEnum.IL2CPP_TYPE_CHAR:
+                value = BitConverter.ToChar(metadata.ReadBytes(2), 0);
+                return true;
+            case Il2CppTypeEnum.IL2CPP_TYPE_U2:
+                value = metadata.ReadUInt16();
+                return true;
+            case Il2CppTypeEnum.IL2CPP_TYPE_I2:
+                value = metadata.ReadInt16();
+                return true;
+            case Il2CppTypeEnum.IL2CPP_TYPE_U4:
+                value = metadata.ReadUInt32();
+                return true;
+            case Il2CppTypeEnum.IL2CPP_TYPE_I4:
+                value = metadata.ReadInt32();
+                return true;
+            case Il2CppTypeEnum.IL2CPP_TYPE_U8:
+                value = metadata.ReadUInt64();
+                return true;
+            case Il2CppTypeEnum.IL2CPP_TYPE_I8:
+                value = metadata.ReadInt64();
+                return true;
+            case Il2CppTypeEnum.IL2CPP_TYPE_R4:
+                value = metadata.ReadSingle();
+                return true;
+            case Il2CppTypeEnum.IL2CPP_TYPE_R8:
+                value = metadata.ReadDouble();
+                return true;
+            case Il2CppTypeEnum.IL2CPP_TYPE_STRING:
+                var len = metadata.ReadInt32();
+                value = metadata.ReadString(len);
+                return true;
+            default:
+                value = pointer;
+                return false;
             }
         }
 

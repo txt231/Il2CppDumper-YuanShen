@@ -36,9 +36,13 @@ namespace Il2CppDumper
         public Il2CppRGCTXDefinition[] rgctxEntries;
 
         private Dictionary<uint, string> stringCache = new Dictionary<uint, string>();
+        private Dictionary<uint, string> stringLiteralCache = new Dictionary<uint, string>();
+
         public ulong Address;
 
-        private byte[] stringDecryptionBlob = null;
+        private MetadataStringDecryptor m_StringDecryptor = null;
+
+        //private byte[] stringDecryptionBlob = null;
 
         public Metadata(Stream stream) : base(stream)
         {
@@ -56,7 +60,8 @@ namespace Il2CppDumper
             Version = 24;
             header = ReadClass<Il2CppGlobalMetadataHeader>(0);
 
-            stringDecryptionBlob = File.ReadAllBytes("D:\\genshinimpactre\\decryption_blob.bin");
+            m_StringDecryptor = new MetadataStringDecryptor(header);
+            //stringDecryptionBlob = File.ReadAllBytes("D:\\genshinimpactre\\decryption_blob.bin");
 
             /*if (version == 24)
             {
@@ -93,7 +98,7 @@ namespace Il2CppDumper
             vtableMethods = ReadClassArray<uint>(header.vtableMethodsOffset, header.vtableMethodsCount / 4);
             if (Version > 16 && Version < 27) //TODO
             {
-                stringLiterals = ReadMetadataClassArray<Il2CppStringLiteral>(0xAADE4, (int)header.genericContainersOffset - 0xAADE4); // see notes for how to get this
+                stringLiterals = ReadMetadataClassArray<Il2CppStringLiteral>(m_StringDecryptor.StringLiteralOffset, (int)m_StringDecryptor.StringLiteralSize); // see notes for how to get this
                 metadataUsageLists = ReadMetadataClassArray<Il2CppMetadataUsageList>(header.metadataUsageListsOffset, header.metadataUsageListsCount);
                 metadataUsagePairs = ReadMetadataClassArray<Il2CppMetadataUsagePair>(header.metadataUsagePairsOffset, header.metadataUsagePairsCount);
 
@@ -152,7 +157,7 @@ namespace Il2CppDumper
             if (!stringCache.TryGetValue(index, out var result))
             {
                 //result = ReadStringToNull(header.stringOffset + index);
-                result = ReadStringToNull(0x9032D0 + index);
+                result = ReadStringToNull(m_StringDecryptor.StringsOffset + index);
                 stringCache.Add(index, result);
             }
             return result;
@@ -186,14 +191,17 @@ namespace Il2CppDumper
 
         public string GetStringLiteralFromIndex(uint index)
         {
+            if (stringLiteralCache.TryGetValue(index, out var s_Result))
+                return s_Result;
+
             var stringLiteral = stringLiterals[index];
-            Position = (ulong)(SizeOf(typeof(Il2CppGlobalMetadataHeader)) + stringLiteral.dataIndex);
+            Position = (ulong)(m_StringDecryptor.StringLiteralDataOffset + stringLiteral.dataIndex);
 
             var buffer = ReadBytes((int)stringLiteral.length);
             for (var i = 0; i < stringLiteral.length; i++)
             {
-                byte cl = (byte)(buffer[i] ^ stringDecryptionBlob[(0x1400 + i) % 0x5000]);
-                byte al = (byte)(stringDecryptionBlob[i % 0x2800 + index % 0x2800] + i);
+                byte cl = (byte)(buffer[i] ^ m_StringDecryptor.KeyData[(0x1400 + i) % 0x5000]);
+                byte al = (byte)(m_StringDecryptor.KeyData[i % 0x2800 + index % 0x2800] + i);
                 buffer[i] = (byte)(cl ^ al);
             }
 

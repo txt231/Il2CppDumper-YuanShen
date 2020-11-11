@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Il2CppDumper.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -145,20 +146,22 @@ namespace Il2CppDumper
         {
             switch (type)
             {
-                case SearchSectionType.Exec:
-                    exec = secs;
-                    break;
-                case SearchSectionType.Data:
-                    data = secs;
-                    break;
-                case SearchSectionType.Bss:
-                    bss = secs;
-                    break;
+            case SearchSectionType.Exec:
+                exec = secs;
+                break;
+            case SearchSectionType.Data:
+                data = secs;
+                break;
+            case SearchSectionType.Bss:
+                bss = secs;
+                break;
             }
         }
 
         public ulong FindCodeRegistration()
         {
+            return FindCodeRegistration_x86_YuanShen();
+
             if (il2Cpp.Version >= 24.2)
             {
                 return FindCodeRegistration2019();
@@ -168,6 +171,8 @@ namespace Il2CppDumper
 
         public ulong FindMetadataRegistration()
         {
+            return FindMetadataRegistration_x86_YuanShen();
+
             if (il2Cpp.Version < 19)
             {
                 return 0;
@@ -370,6 +375,92 @@ namespace Il2CppDumper
                 }
             }
             return 0ul;
+        }
+
+
+        private static readonly string c_MetadataRegistrationSignature = @"
+4C 8D 05 ?? ?? ?? ??
+48 8D 15 [ ?? ?? ?? ?? ]
+48 8D 0D ?? ?? ?? ??
+E9 ? ? ? ??";
+
+        private static readonly string c_CodeRegistrationSignature = @"
+4C 8D 05 ?? ?? ?? ??
+48 8D 15 ?? ?? ?? ??
+48 8D 0D [ ?? ?? ?? ?? ]
+E9 ?? ?? ?? ??";
+
+        private ulong FindCodeRegistration_x86_YuanShen()
+        {
+            var s_Sections = exec.Concat(data);
+
+
+            SignatureScanner s_Scanner = new SignatureScanner(c_CodeRegistrationSignature);
+
+            long s_Location = -1;
+
+            foreach (var s_Section in s_Sections)
+            {
+                il2Cpp.Position = s_Section.offset;
+                var s_Buffer = il2Cpp.ReadBytes((int)(s_Section.offsetEnd - s_Section.offset));
+
+                if (!s_Scanner.ResolveInBuffer(s_Buffer, out var s_Index, out var s_RelativeLocation))
+                    continue;
+
+
+                s_Location = (long)s_Section.address + s_RelativeLocation;
+                break;
+            }
+
+            if (s_Location == -1)
+                return 0;
+
+            return (ulong)s_Location;
+
+            /*
+            // Resolve location
+            foreach (var s_Section in s_Sections)
+            {
+                if (s_Location < (long)s_Section.address ||
+                    s_Location > (long)s_Section.addressEnd)
+                    continue;
+
+
+            }
+
+
+            return 0;
+            */
+        }
+
+        private ulong FindMetadataRegistration_x86_YuanShen()
+        {
+            var s_Sections = exec.Concat(data);
+
+
+            SignatureScanner s_Scanner = new SignatureScanner(c_MetadataRegistrationSignature);
+
+            long s_Location = -1;
+
+            foreach (var s_Section in s_Sections)
+            {
+                il2Cpp.Position = s_Section.offset;
+                var s_Buffer = il2Cpp.ReadBytes((int)(s_Section.offsetEnd - s_Section.offset));
+
+                if (!s_Scanner.ResolveInBuffer(s_Buffer, out var s_Index, out var s_RelativeLocation))
+                    continue;
+
+
+                s_Location = (long)s_Section.address + s_RelativeLocation;
+                break;
+            }
+
+            if (s_Location == -1)
+                return 0;
+
+            return (ulong)s_Location;
+
+
         }
     }
 }

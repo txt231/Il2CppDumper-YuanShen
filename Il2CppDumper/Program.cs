@@ -195,17 +195,17 @@ namespace Il2CppDumper
                         Console.WriteLine("Use custom PE loader");
                         il2Cpp = PELoader.Load(il2cppPath);
                         il2Cpp.SetProperties(version, metadata.maxMetadataUsages);
-                        //flag = il2Cpp.PlusSearch(metadata.methodDefs.Count(x => x.methodIndex >= 0), metadata.typeDefs.Length);
+                        flag = il2Cpp.PlusSearch(metadata.methodDefs.Count(x => x.methodIndex >= 0), metadata.typeDefs.Length);
                     }
                 }
-                /*if (!flag)
+                if (!flag)
                 {
                     flag = il2Cpp.Search();
                 }
                 if (!flag)
                 {
                     flag = il2Cpp.SymbolSearch();
-                }*/
+                }
                 if (!flag)
                 {
                     Console.WriteLine("ERROR: Can't use auto mode to process file, try manual mode.");
